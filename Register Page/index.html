@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register - Create Your Account</title>
+    <link rel="stylesheet" href="Re Style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+      <div class="loading-spinner"></div>
+      <p>Loading...</p>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+      <div class="form-wrapper">
+        <form class="register-form" id="registerForm">
+          <div class="form-header">
+            <h1 class="form-title">Create Account</h1>
+            <p class="form-subtitle">
+              Join our community and start your journey
+            </p>
+          </div>
+
+          <div class="form-body">
+            <!-- Name Fields -->
+            <div class="name-group">
+              <div class="input-field">
+                <input type="text" id="firstName" required />
+                <label for="firstName">First Name</label>
+                <div class="error-message" id="firstNameError"></div>
+              </div>
+              <div class="input-field">
+                <input type="text" id="lastName" required />
+                <label for="lastName">Last Name</label>
+                <div class="error-message" id="lastNameError"></div>
+              </div>
+            </div>
+
+            <!-- Email Field -->
+            <div class="input-field">
+              <input type="email" id="email" required />
+              <label for="email">Email Address</label>
+              <div class="error-message" id="emailError"></div>
+            </div>
+
+            <!-- Password Fields -->
+            <div class="input-field password-field">
+              <input type="password" id="password" required />
+              <label for="password">Password</label>
+              <button type="button" class="password-toggle" id="passwordToggle">
+                <i class="fas fa-eye"></i>
+              </button>
+              <div class="password-strength" id="passwordStrength">
+                <div class="strength-bar">
+                  <div class="strength-fill" id="strengthFill"></div>
+                </div>
+                <span class="strength-text" id="strengthText">Weak</span>
+              </div>
+              <div class="error-message" id="passwordError"></div>
+            </div>
+
+            <div class="input-field password-field">
+              <input type="password" id="confirmPassword" required />
+              <label for="confirmPassword">Confirm Password</label>
+              <button
+                type="button"
+                class="password-toggle"
+                id="confirmPasswordToggle"
+              >
+                <i class="fas fa-eye"></i>
+              </button>
+              <div class="error-message" id="confirmPasswordError"></div>
+            </div>
+
+            <!-- Terms Checkbox -->
+            <div class="checkbox-field">
+              <input type="checkbox" id="terms" required />
+              <label for="terms">
+                I agree to the
+                <a href="#" class="terms-link">Terms of Service</a> and
+                <a href="#" class="terms-link">Privacy Policy</a>
+              </label>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="submit-btn" id="submitBtn">
+              <span class="btn-text">Create Account</span>
+              <div class="btn-loader" id="btnLoader">
+                <i class="fas fa-spinner fa-spin"></i>
+              </div>
+            </button>
+          </div>
+
+          <!-- Success Message -->
+          <div class="success-message" id="successMessage">
+            <i class="fas fa-check-circle"></i>
+            <p>Account created successfully!</p>
+          </div>
+
+          <!-- Sign In Link -->
+          <div class="signin-section">
+            <p>
+              Already have an account?
+              <a href="#" class="signin-link">Sign In</a>
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // DOM Elements
+      const loadingScreen = document.getElementById("loadingScreen");
+      const form = document.getElementById("registerForm");
+      const submitBtn = document.getElementById("submitBtn");
+      const btnText = submitBtn.querySelector(".btn-text");
+      const btnLoader = document.getElementById("btnLoader");
+      const successMessage = document.getElementById("successMessage");
+
+      // Input elements
+      const firstName = document.getElementById("firstName");
+      const lastName = document.getElementById("lastName");
+      const email = document.getElementById("email");
+      const password = document.getElementById("password");
+      const confirmPassword = document.getElementById("confirmPassword");
+      const terms = document.getElementById("terms");
+
+      // Error elements
+      const firstNameError = document.getElementById("firstNameError");
+      const lastNameError = document.getElementById("lastNameError");
+      const emailError = document.getElementById("emailError");
+      const passwordError = document.getElementById("passwordError");
+      const confirmPasswordError = document.getElementById(
+        "confirmPasswordError"
+      );
+
+      // Password toggles
+      const passwordToggle = document.getElementById("passwordToggle");
+      const confirmPasswordToggle = document.getElementById(
+        "confirmPasswordToggle"
+      );
+
+      // Password strength
+      const strengthFill = document.getElementById("strengthFill");
+      const strengthText = document.getElementById("strengthText");
+
+      // Hide loading screen
+      window.addEventListener("load", () => {
+        setTimeout(() => {
+          loadingScreen.style.opacity = "0";
+          setTimeout(() => {
+            loadingScreen.style.display = "none";
+          }, 300);
+        }, 1000);
+      });
+
+      // Password visibility toggle
+      function togglePassword(input, toggle) {
+        const icon = toggle.querySelector("i");
+        if (input.type === "password") {
+          input.type = "text";
+          icon.className = "fas fa-eye-slash";
+        } else {
+          input.type = "password";
+          icon.className = "fas fa-eye";
+        }
+      }
+
+      passwordToggle.addEventListener("click", () =>
+        togglePassword(password, passwordToggle)
+      );
+      confirmPasswordToggle.addEventListener("click", () =>
+        togglePassword(confirmPassword, confirmPasswordToggle)
+      );
+
+      // Password strength checker
+      function checkPasswordStrength(password) {
+        let score = 0;
+        const feedback = [];
+
+        if (password.length >= 8) score++;
+        else feedback.push("At least 8 characters");
+
+        if (/[a-z]/.test(password)) score++;
+        else feedback.push("Include lowercase letters");
+
+        if (/[A-Z]/.test(password)) score++;
+        else feedback.push("Include uppercase letters");
+
+        if (/[0-9]/.test(password)) score++;
+        else feedback.push("Include numbers");
+
+        if (/[^A-Za-z0-9]/.test(password)) score++;
+        else feedback.push("Include special characters");
+
+        return { score, feedback };
+      }
+
+      // Update password strength display
+      password.addEventListener("input", () => {
+        const { score, feedback } = checkPasswordStrength(password.value);
+
+        // Update strength bar
+        const percentage = (score / 5) * 100;
+        strengthFill.style.width = percentage + "%";
+
+        // Update strength text and colors
+        if (score <= 2) {
+          strengthFill.className = "strength-fill weak";
+          strengthText.textContent = "Weak";
+          strengthText.className = "strength-text weak";
+        } else if (score <= 4) {
+          strengthFill.className = "strength-fill medium";
+          strengthText.textContent = "Medium";
+          strengthText.className = "strength-text medium";
+        } else {
+          strengthFill.className = "strength-fill strong";
+          strengthText.textContent = "Strong";
+          strengthText.className = "strength-text strong";
+        }
+
+        // Show/hide feedback
+        if (password.value.length > 0) {
+          passwordError.textContent = feedback.join(", ");
+          passwordError.style.display = "block";
+        } else {
+          passwordError.style.display = "none";
+        }
+      });
+
+      // Form validation
+      function validateField(field, errorElement, validationFn) {
+        const value = field.value.trim();
+        const error = validationFn(value);
+
+        if (error) {
+          errorElement.textContent = error;
+          errorElement.style.display = "block";
+          field.classList.add("error");
+          return false;
+        } else {
+          errorElement.style.display = "none";
+          field.classList.remove("error");
+          return true;
+        }
+      }
+
+      // Validation functions
+      const validations = {
+        firstName: (value) => {
+          if (!value) return "First name is required";
+          if (value.length < 2)
+            return "First name must be at least 2 characters";
+          if (!/^[a-zA-Z\s]+$/.test(value))
+            return "First name can only contain letters";
+          return null;
+        },
+        lastName: (value) => {
+          if (!value) return "Last name is required";
+          if (value.length < 2)
+            return "Last name must be at least 2 characters";
+          if (!/^[a-zA-Z\s]+$/.test(value))
+            return "Last name can only contain letters";
+          return null;
+        },
+        email: (value) => {
+          if (!value) return "Email is required";
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))
+            return "Please enter a valid email";
+          return null;
+        },
+        password: (value) => {
+          if (!value) return "Password is required";
+          const { score } = checkPasswordStrength(value);
+          if (score < 3) return "Password is too weak";
+          return null;
+        },
+        confirmPassword: (value) => {
+          if (!value) return "Please confirm your password";
+          if (value !== password.value) return "Passwords do not match";
+          return null;
+        },
+      };
+
+      // Real-time validation
+      firstName.addEventListener("blur", () =>
+        validateField(firstName, firstNameError, validations.firstName)
+      );
+      lastName.addEventListener("blur", () =>
+        validateField(lastName, lastNameError, validations.lastName)
+      );
+      email.addEventListener("blur", () =>
+        validateField(email, emailError, validations.email)
+      );
+      password.addEventListener("blur", () =>
+        validateField(password, passwordError, validations.password)
+      );
+      confirmPassword.addEventListener("blur", () =>
+        validateField(
+          confirmPassword,
+          confirmPasswordError,
+          validations.confirmPassword
+        )
+      );
+
+      // Form submission
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        // Validate all fields
+        const isFirstNameValid = validateField(
+          firstName,
+          firstNameError,
+          validations.firstName
+        );
+        const isLastNameValid = validateField(
+          lastName,
+          lastNameError,
+          validations.lastName
+        );
+        const isEmailValid = validateField(
+          email,
+          emailError,
+          validations.email
+        );
+        const isPasswordValid = validateField(
+          password,
+          passwordError,
+          validations.password
+        );
+        const isConfirmPasswordValid = validateField(
+          confirmPassword,
+          confirmPasswordError,
+          validations.confirmPassword
+        );
+
+        if (
+          isFirstNameValid &&
+          isLastNameValid &&
+          isEmailValid &&
+          isPasswordValid &&
+          isConfirmPasswordValid &&
+          terms.checked
+        ) {
+          // Show loading state
+          submitBtn.classList.add("loading");
+          btnText.style.display = "none";
+          btnLoader.style.display = "block";
+
+          // Simulate API call
+          setTimeout(() => {
+            // Show success message
+            successMessage.style.display = "flex";
+            form.reset();
+
+            // Reset button
+            setTimeout(() => {
+              submitBtn.classList.remove("loading");
+              btnText.style.display = "block";
+              btnLoader.style.display = "none";
+              successMessage.style.display = "none";
+            }, 3000);
+          }, 2000);
+        } else if (!terms.checked) {
+          // Show terms error
+          alert("Please accept the Terms of Service and Privacy Policy");
+        }
+      });
+
+      // Auto-focus first field
+      firstName.focus();
+    </script>
+  </body>
+</html>
